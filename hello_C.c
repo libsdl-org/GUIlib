@@ -49,11 +49,11 @@ void cleanup(void)
 	GUI_Destroy(gui);
 }
 
-void Output(SDL_Surface *screen, const char *title, const char *text)
+void Output(SDL_Window *window, const char *title, const char *text)
 {
 	GUI_Output *output;
 
-	output = GUI_CreateOutput(screen, 60, 5, NULL);
+	output = GUI_CreateOutput(window, 60, 5, NULL);
 	if ( output ) {
 		int i, pos;
 		char formatted_text[1024];
@@ -80,6 +80,7 @@ void Output(SDL_Surface *screen, const char *title, const char *text)
 
 int main(int argc, char *argv[])
 {
+	SDL_Window *window;
 	SDL_Surface *screen;
 	SDL_Color gray;
 	int x, y;
@@ -94,15 +95,11 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	/* Get a video mode for display */
-	screen = SDL_SetVideoMode(640, 480, 0, SDL_SWSURFACE);
-	if ( screen == NULL ) {
-		fprintf(stderr, "Couldn't set video mode: %s\n",SDL_GetError());
-		exit(1);
-	}
-	SDL_WM_SetCaption("GUI Hello!", "hello");
+	window = SDL_CreateWindow("GUI Hello!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
+	screen = SDL_GetWindowSurface(window);
 
 	/* Create a GUI container */
-	gui = GUI_Create(screen);
+	gui = GUI_Create(window);
 
 	/* Add our interface widgets:
 	   We want a gray background and a centered image button.
@@ -136,6 +133,6 @@ int main(int argc, char *argv[])
 	/* Run the GUI, and then clean up when it's done. */
 	GUI_Run(gui, NULL);
 	cleanup();
-	Output(screen, "-= Thanks =-", "Thanks for trying the C GUI interface");
+	Output(window, "-= Thanks =-", "Thanks for trying the C GUI interface");
 	exit(0);
 }

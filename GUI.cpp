@@ -12,9 +12,10 @@
 #define WIDGET_ARRAYCHUNK	32
 
 
-GUI:: GUI(SDL_Surface *display)
+GUI:: GUI(SDL_Window *window)
 {
-	screen = display;
+	m_window = window;
+	screen = SDL_GetWindowSurface(window);
 	numwidgets = 0;
 	maxwidgets = 0;
 	widgets = NULL;
@@ -62,7 +63,7 @@ GUI:: AddWidget(GUI_Widget *widget)
 		++numwidgets;
 	}
 	widgets[i] = widget;
-	widget->SetDisplay(screen);
+	widget->SetDisplay(m_window);
 	return(0);
 }
 
@@ -76,7 +77,7 @@ GUI:: Display(void)
 			widgets[i]->Display();
 		}
 	}
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
+	SDL_UpdateWindowSurface(m_window);
 }
 
 /* Function to handle a GUI status */
@@ -109,6 +110,7 @@ GUI:: HandleEvent(const SDL_Event *event)
 			break;
 
 		/* Keyboard and mouse events go to widgets */
+		case SDL_TEXTINPUT:
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 		case SDL_MOUSEMOTION:

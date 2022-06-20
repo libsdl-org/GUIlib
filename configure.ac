@@ -11,11 +11,11 @@ dnl Set various version strings - taken gratefully from the GTk sources
 # if backwards compatibility has been broken,
 # set BINARY_AGE and INTERFACE_AGE to 0.
 
-MAJOR_VERSION=1
-MINOR_VERSION=2
-MICRO_VERSION=1
-INTERFACE_AGE=1
-BINARY_AGE=1
+MAJOR_VERSION=2
+MINOR_VERSION=0
+MICRO_VERSION=0
+INTERFACE_AGE=0
+BINARY_AGE=0
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 
 AC_SUBST(MAJOR_VERSION)
@@ -51,7 +51,7 @@ AC_PROG_INSTALL
 LT_INIT([win32-dll])
 
 dnl Check for SDL
-SDL_VERSION=2.0.10
+SDL_VERSION=2.0.16
 AM_PATH_SDL2($SDL_VERSION,
             :,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])

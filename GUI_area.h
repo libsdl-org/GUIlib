@@ -23,7 +23,7 @@ public:
 			Uint8 fr, Uint8 fg, Uint8 fb, int fthick, int aShape = AREA_ANGULAR);
 
 	/* Map the color to the display */
-	virtual void SetDisplay(SDL_Surface *display);
+	virtual void SetDisplay(SDL_Window *window);
 
 	/* Show the widget  */
 	virtual void Display(void);

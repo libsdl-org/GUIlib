@@ -10,9 +10,9 @@
 extern "C" {
 
 /* Create a GUI */
-CGUI *GUI_Create(SDL_Surface *screen)
+CGUI *GUI_Create(SDL_Window *window)
 {
-	return((CGUI *)new GUI(screen));
+	return((CGUI *)new GUI(window));
 }
 
 /* Create a generic widget */

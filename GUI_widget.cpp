@@ -18,6 +18,7 @@ void
 GUI_Widget:: Init(void *data, int x, int y, int w, int h)
 {
 	widget_data = data;
+	m_window = NULL;
 	screen = NULL;
 	SetRect(x, y, w, h);
 	Show();
@@ -126,9 +127,10 @@ GUI_Widget:: HitRect(int x, int y, SDL_Rect &rect)
 
 /* Set the display surface for this widget */
 void
-GUI_Widget:: SetDisplay(SDL_Surface *display)
+GUI_Widget:: SetDisplay(SDL_Window *window)
 {
-	screen = display;
+	m_window = window;
+	screen = SDL_GetWindowSurface(window);
 }
 
 /* Show the widget.
@@ -149,7 +151,7 @@ void GUI_Widget::Redraw(void)
   if (status==WIDGET_VISIBLE)
   {
     Display();
-    SDL_UpdateRects(screen,1,&area);
+    SDL_UpdateWindowSurfaceRects(m_window,&area,1);
   }
 }
 
@@ -166,12 +168,17 @@ GUI_Widget:: Idle(void)
    These are called by the default HandleEvent function.
 */
 GUI_status
-GUI_Widget:: KeyDown(SDL_keysym key)
+GUI_Widget:: TextInput(const char *text)
 {
 	return(GUI_PASS);
 }
 GUI_status
-GUI_Widget:: KeyUp(SDL_keysym key)
+GUI_Widget:: KeyDown(SDL_Keysym key)
+{
+	return(GUI_PASS);
+}
+GUI_status
+GUI_Widget:: KeyUp(SDL_Keysym key)
 {
 	return(GUI_PASS);
 }
@@ -198,6 +205,10 @@ GUI_status
 GUI_Widget:: HandleEvent(const SDL_Event *event)
 {
 	switch (event->type) {
+		case SDL_TEXTINPUT: {
+			return(TextInput(event->text.text));
+		}
+		break;
 		case SDL_KEYDOWN: {
 			return(KeyDown(event->key.keysym));
 		}

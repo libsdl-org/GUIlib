@@ -42,7 +42,7 @@ typedef void (*GUI_FreeProc)(widget_info *info);
 
 
 /* Create a GUI */
-extern CGUI *GUI_Create(SDL_Surface *screen);
+extern CGUI *GUI_Create(SDL_Window *window);
 
 /* Create a generic widget */
 extern CGUI_Widget *GUI_Widget_Create(void *data, int x, int y, int w, int h,

@@ -14,7 +14,7 @@
 #define KEYREPEAT_TIME	100		/* Repeat every 100 ms */
 
 GUI_TermWin:: GUI_TermWin(int x, int y, int w, int h, SDL_Surface *Font,
-				void (*KeyProc)(SDLKey key, Uint16 unicode), int scrollback)
+				void (*KeyProc)(SDL_Keycode key, Uint16 unicode), int scrollback)
  : GUI_Scrollable(NULL, x, y, w, h)
 {
 	/* The font surface should be a 16x16 character pixmap */
@@ -38,19 +38,11 @@ GUI_TermWin:: GUI_TermWin(int x, int y, int w, int h, SDL_Surface *Font,
 
 	/* Set the user-defined keyboard handler */
 	keyproc = KeyProc;
-	repeat_key = SDLK_UNKNOWN;
-	repeat_unicode = 0;
-
-	/* Set key event translation on */
-	translated = SDL_EnableUNICODE(1);
 }
 
 GUI_TermWin:: ~GUI_TermWin()
 {
 	delete[] vscreen;
-
-	/* Reset key event translation */
-	SDL_EnableUNICODE(translated);
 }
 
 void
@@ -106,25 +98,40 @@ GUI_TermWin:: Range(int &first, int &last)
 }
 
 GUI_status
-GUI_TermWin:: KeyDown(SDL_keysym key)
+GUI_TermWin:: TextInput(const char *text)
 {
 	GUI_status status;
 
 	status = GUI_PASS;
 	if ( keyproc ) {
-		keyproc(key.sym, key.unicode);
-		repeat_key = key.sym;
-		repeat_unicode = key.unicode;
-		repeat_next = SDL_GetTicks()+5*KEYREPEAT_TIME;
+		Uint16 *text16 = SDL_iconv_utf8_ucs2(text);
+		if (text16) {
+			for (int i = 0; text16[i]; ++i) {
+				keyproc(0, text16[i]);
+			}
+			SDL_free(text16);
+		}
 		status = GUI_YUM;
 	}
 	return(status);
 }
 
 GUI_status
-GUI_TermWin:: KeyUp(SDL_keysym key)
+GUI_TermWin:: KeyDown(SDL_Keysym key)
 {
-	repeat_key = SDLK_UNKNOWN;
+	GUI_status status;
+
+	status = GUI_PASS;
+	if ( keyproc ) {
+		keyproc(key.sym, 0);
+		status = GUI_YUM;
+	}
+	return(status);
+}
+
+GUI_status
+GUI_TermWin:: KeyUp(SDL_Keysym key)
+{
 	return(GUI_PASS);
 }
 
@@ -233,14 +240,6 @@ GUI_TermWin:: Idle(void)
 
 	status = GUI_PASS;
 
-	/* Perform any necessary key repeat */
-	if ( repeat_key && keyproc ) {
-		if ( repeat_next <= SDL_GetTicks() ) {
-			keyproc(repeat_key, repeat_unicode);
-			repeat_next = SDL_GetTicks()+KEYREPEAT_TIME;
-		}
-	}
-
 	/* Check to see if display contents have changed */
 	if ( changed ) {
 		status = GUI_REDRAW;
@@ -256,12 +255,12 @@ void GUI_TermWin::SetColoring(Uint8 fr,Uint8 fg,Uint8 fb, int bg_opaque,
 	SDL_Color colors[3]={{br,bg,bb,0},{fr,fg,fb,0}};
 	if (bg_opaque)
 	{
-	  SDL_SetColors(font,colors,0,2);
-	  SDL_SetColorKey(font,0,0);
+	  SDL_SetPaletteColors(font->format->palette,colors,0,2);
+	  SDL_SetColorKey(font,SDL_FALSE,0);
 	}
 	else
 	{
-	  SDL_SetColors(font,&colors[1],1,1);
-	  SDL_SetColorKey(font,SDL_SRCCOLORKEY,0);
+	  SDL_SetPaletteColors(font->format->palette,&colors[1],1,1);
+	  SDL_SetColorKey(font,SDL_TRUE,0);
 	}
 }

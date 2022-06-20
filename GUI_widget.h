@@ -54,7 +54,7 @@ public:
 	virtual int HitRect(int x, int y, SDL_Rect &rect);
 
 	/* Set the display surface for this widget */
-	virtual void SetDisplay(SDL_Surface *display);
+	virtual void SetDisplay(SDL_Window *window);
 
 	/* Show the widget.
 	   If the surface needs to be locked, it will be locked
@@ -73,8 +73,9 @@ public:
 	   or not the event should be passed on to other widgets.
 	   These are called by the default HandleEvent function.
 	*/
-	virtual GUI_status KeyDown(SDL_keysym key);
-	virtual GUI_status KeyUp(SDL_keysym key);
+	virtual GUI_status TextInput(const char *text);
+	virtual GUI_status KeyDown(SDL_Keysym key);
+	virtual GUI_status KeyUp(SDL_Keysym key);
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
 	virtual GUI_status MouseMotion(int x, int y, Uint8 state);
@@ -85,7 +86,7 @@ public:
 	virtual GUI_status HandleEvent(const SDL_Event *event);
 
 	/* Returns NULL if everything is okay, or an error message if not */
-	char *Error(void) {
+	const char *Error(void) {
 		return(error);
 	}
 
@@ -106,6 +107,7 @@ protected:
 	void *widget_data;
 
 	/* The display surface for the widget */
+	SDL_Window *m_window;
 	SDL_Surface *screen;
 
 	/* The area covered by the widget */
@@ -115,7 +117,7 @@ protected:
 	int status;
 
 	/* Useful for getting error feedback */
-	void SetError(char *fmt, ...) {
+	void SetError(const char *fmt, ...) {
 		va_list ap;
 
 		va_start(ap, fmt);

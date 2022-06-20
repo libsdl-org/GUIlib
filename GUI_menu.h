@@ -31,7 +31,7 @@ class GUI_Submenu : public GUI_Button
 
  public:
 
-  GUI_Submenu(GUI_Menu *Aparent, int Asubmenuid, int x, int y, char *Atext,
+  GUI_Submenu(GUI_Menu *Aparent, int Asubmenuid, int x, int y, const char *Atext,
 	      GUI_Font *Afont, int is_checkmenu);
 
   virtual ~GUI_Submenu();
@@ -49,7 +49,7 @@ class GUI_Submenu : public GUI_Button
     {return numitems;}
   inline virtual int GetLength()
     {return strlen(Text);}
-  inline virtual char* GetText()
+  inline virtual const char* GetText()
     {return Text;}
 
   virtual void SetItemsClickState(int button, int value);
@@ -72,7 +72,7 @@ class GUI_Menuitem : public GUI_Submenu
 
  public:
   GUI_Menuitem(GUI_Menu *Aparent, int Asubmenuid, int Aid, int x, int y,
-	       char *Atext, GUI_Font *Afont,
+	       const char *Atext, GUI_Font *Afont,
 	       GUI_MenuActiveProc Aactiveproc, int is_checkmenu = 0);
 
   inline virtual int GetId()
@@ -96,10 +96,10 @@ public:
   ~GUI_Menu();
 
   /* add a toplevel menu with an id and the caption */
-  virtual void AddSubmenu(int Aid, char *Atext);
+  virtual void AddSubmenu(int Aid, const char *Atext);
   /* add an item below the given submenu with an idm a caption, a callback and
      a flag if it shall be a checkable menu item */
-  virtual void AddMenuitem(int Asubmenuid, int Aid, char *Atext,
+  virtual void AddMenuitem(int Asubmenuid, int Aid, const char *Atext,
 	       GUI_MenuActiveProc activeproc, int is_checkmenu = 0);
 
   /* the menu items call this to keep track of each other - not very nice, I know*/

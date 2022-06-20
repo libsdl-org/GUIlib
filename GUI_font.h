@@ -13,7 +13,7 @@ public:
   GUI_Font();
 
   /* open named BMP file */
-  GUI_Font(char *name);
+  GUI_Font(const char *name);
 
   /* use given YxY surface */
   GUI_Font(SDL_Surface *bitmap);
@@ -38,11 +38,11 @@ public:
     {return charw;}
 
   /* yields pixel width and height of a string when printed with this font */
-  inline virtual void TextExtent(char *text, int *w, int *h)
+  inline virtual void TextExtent(const char *text, int *w, int *h)
     {*w=strlen(text)*charw; *h=charh-1;}
 
   /* put the text onto the given surface using the preset mode and colors */
-  virtual void TextOut(SDL_Surface *context, int x, int y, char* text);
+  virtual void TextOut(SDL_Surface *context, int x, int y, const char* text);
 
 protected:
   /* the font source surface */

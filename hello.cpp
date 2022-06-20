@@ -18,13 +18,13 @@ enum image_names {
 	IMAGE_SCROLL_DN,
 	NUM_IMAGES
 };
-char *image_files[NUM_IMAGES] = {
+const char *image_files[NUM_IMAGES] = {
 	"hello.bmp", "hello2.bmp", "scroll_up.bmp", "scroll_dn.bmp"
 };
 SDL_Surface *images[NUM_IMAGES];
 
 
-void ShowChar(SDLKey key, Uint16 unicode)
+void ShowChar(SDL_Keycode key, Uint16 unicode)
 {
 	if ( unicode && (unicode <= 255) ) {
 		Uint8 ch;
@@ -49,11 +49,11 @@ void cleanup(void)
 	}
 }
 
-void Output(SDL_Surface *screen, const char *title, const char *text)
+void Output(SDL_Window *window, const char *title, const char *text)
 {
 	GUI_Output *output;
 
-	output = GUI_CreateOutput(screen, 60, 5, NULL);
+	output = GUI_CreateOutput(window, 60, 5, NULL);
 	if ( output ) {
 		unsigned int i, pos;
 		char formatted_text[1024];
@@ -80,6 +80,7 @@ void Output(SDL_Surface *screen, const char *title, const char *text)
 
 int main(int argc, char *argv[])
 {
+	SDL_Window *window;
 	SDL_Surface *screen;
 	int x, y, i;
 	int error;
@@ -95,15 +96,11 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	/* Get a video mode for display */
-	screen = SDL_SetVideoMode(640, 480, 0, SDL_SWSURFACE);
-	if ( screen == NULL ) {
-		fprintf(stderr, "Couldn't set video mode: %s\n",SDL_GetError());
-		exit(1);
-	}
-	SDL_WM_SetCaption("GUI Hello!", "hello");
+	window = SDL_CreateWindow("GUI Hello!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
+	screen = SDL_GetWindowSurface(window);
 
 	/* Create a GUI container */
-	gui = new GUI(screen);
+	gui = new GUI(window);
 
 	/* Load our images */
 	for ( i=0; i<NUM_IMAGES; ++i ) {
@@ -150,7 +147,7 @@ int main(int argc, char *argv[])
 
 	/* Run the GUI, and then clean up when it's done. */
 	gui->Run(NULL);
-	Output(screen,"-= Thanks =-","Thanks for trying the C++ GUI interface");
+	Output(window,"-= Thanks =-","Thanks for trying the C++ GUI interface");
 	cleanup();
 	exit(0);
 

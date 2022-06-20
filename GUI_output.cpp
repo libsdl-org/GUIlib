@@ -31,6 +31,7 @@ extern "C" {
 /* The (really C++) structure holding information for popup text output */
 struct GUI_Output {
 	int visible;
+	SDL_Window *m_window;
 	SDL_Surface *screen;
 	GUI_TermWin *window;
 	GUI_Area *frame_inner;
@@ -43,15 +44,17 @@ struct GUI_Output {
    image (with an extra pixel row under each row of characters), or NULL to
    use a default internal 8x8-pixel font.
  */
-GUI_Output *GUI_CreateOutput(SDL_Surface *screen,
+GUI_Output *GUI_CreateOutput(SDL_Window *window,
 				int width, int height, SDL_Surface *font)
 {
+	SDL_Surface *screen = SDL_GetWindowSurface(window);
 	GUI_Output *output;
 	int w, h, x, y;
 
 	/* Create a new output window */
 	output = new GUI_Output;
 	output->visible = 0;
+	output->m_window = window;
 	output->screen = screen;
 	if ( font == NULL ) {
 		font = GUI_DefaultFont();
@@ -73,7 +76,7 @@ GUI_Output *GUI_CreateOutput(SDL_Surface *screen,
 	output->frame_outer = new GUI_Area(x, y, w, h, 0, 0, 0);
 
 	/* Allocate a save buffer for the area behind it */
-	output->behind = SDL_AllocSurface(SDL_SWSURFACE, w, h,
+	output->behind = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
 				screen->format->BitsPerPixel,
 				screen->format->Rmask,
 				screen->format->Gmask,
@@ -114,9 +117,9 @@ void GUI_ClearOutput(GUI_Output *output)
 void GUI_ShowOutput(GUI_Output *output, int wait)
 {
 	/* Display the text output window */
-	output->frame_outer->SetDisplay(output->screen);
-	output->frame_inner->SetDisplay(output->screen);
-	output->window->SetDisplay(output->screen);
+	output->frame_outer->SetDisplay(output->m_window);
+	output->frame_inner->SetDisplay(output->m_window);
+	output->window->SetDisplay(output->m_window);
 	if ( output->behind ) {
 		SDL_Rect src;
 
@@ -129,15 +132,15 @@ void GUI_ShowOutput(GUI_Output *output, int wait)
 	output->frame_outer->Display();
 	output->frame_inner->Display();
 	output->window->Display();
-	SDL_UpdateRect(output->screen, 0, 0, 0, 0);
+	SDL_UpdateWindowSurface(output->m_window);
 	output->visible = 1;
 
 	/* Pump the event queue, waiting for key and mouse press events */
 	if ( wait ) {
 		SDL_Event event;
 
-		while ( ! SDL_PeepEvents(&event, 1, SDL_GETEVENT,
-				(SDL_KEYDOWNMASK|SDL_MOUSEBUTTONDOWNMASK)) ) {
+		while ( ! SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYDOWN) &&
+		        ! SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONDOWN) ) {
 			SDL_Delay(20);
 			SDL_PumpEvents();
 		}
@@ -155,7 +158,7 @@ void GUI_HideOutput(GUI_Output *output)
 		dst.w = output->frame_outer->W();
 		dst.h = output->frame_outer->H();
 		SDL_BlitSurface(output->behind, NULL, output->screen, &dst);
-		SDL_UpdateRects(output->screen, 1, &dst);
+		SDL_UpdateWindowSurfaceRects(output->m_window, &dst, 1);
 	}
 	output->visible = 0;
 }
@@ -194,7 +197,7 @@ void GUI_DeleteOutput(GUI_Output *output)
 
    Returns the index of the button pressed, which is style dependent:
 */
-int GUI_MessageBox(SDL_Surface *screen,
+int GUI_MessageBox(SDL_Window *window,
 			const char *title, const char *text, Uint32 style)
 {
 	int status;
@@ -205,6 +208,7 @@ int GUI_MessageBox(SDL_Surface *screen,
 	GUI_Button *button;
 	int w, h, x, y;
 	unsigned int i;
+	SDL_Surface *screen;
 	SDL_Surface *font;
 	SDL_Surface *images[2];
 	SDL_Surface *background;
@@ -215,8 +219,9 @@ int GUI_MessageBox(SDL_Surface *screen,
 	status = -1;
 
 	/* Create the GUI holder */
-	gui = new GUI(screen);
+	gui = new GUI(window);
 	font = GUI_DefaultFont();
+	screen = SDL_GetWindowSurface(window);
 
 	/* Create the GUI elements */
 	w = gui_w;
@@ -230,7 +235,7 @@ int GUI_MessageBox(SDL_Surface *screen,
 	srcrect.w = w;
 	srcrect.h = h;
 	dstrect = srcrect;
-	background = SDL_AllocSurface(SDL_SWSURFACE, w, h, 
+	background = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
 				screen->format->BitsPerPixel,
 				screen->format->Rmask,
 				screen->format->Gmask,
@@ -361,7 +366,7 @@ int GUI_MessageBox(SDL_Surface *screen,
 		}
 	}
 	SDL_BlitSurface(background, NULL, screen, &dstrect);
-	SDL_UpdateRects(screen, 1, &dstrect);
+	SDL_UpdateWindowSurfaceRects(window, &dstrect, 1);
 	return(status);
 }
 

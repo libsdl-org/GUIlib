@@ -471,7 +471,6 @@ libGUI_la_LDFLAGS = \
 EXTRA_DIST = \
 	CHANGES			\
 	autogen.sh		\
-	MPWmake.sea.hqx		\
 	hello.bmp		\
 	hello2.bmp		\
 	scroll_dn.bmp		\

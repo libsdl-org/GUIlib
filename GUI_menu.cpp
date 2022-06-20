@@ -20,7 +20,7 @@ static GUI_status Default_MenuActiveProc(int caller_id, int is_checked, void *un
 
 
 GUI_Submenu::GUI_Submenu(GUI_Menu *Aparent, int Asubmenuid, int x, int y,
-			 char *Atext, GUI_Font *Afont, int is_checkmenu)
+			 const char *Atext, GUI_Font *Afont, int is_checkmenu)
   : GUI_Button(NULL,x,y,(strlen(Atext)+is_checkmenu*2)*Afont->CharWidth()+(MENU_OVERSIZE << 1),
 	       Afont->CharHeight()+MENU_OVERSIZE,Atext,Afont,
 	       BUTTON_TEXTALIGN_LEFT,is_checkmenu,NULL,1)
@@ -138,7 +138,7 @@ void GUI_Submenu::SetItemsClickState(int button, int value)
 //////////////////////////////////////////////////////////////////////////////////////
 
 GUI_Menuitem::GUI_Menuitem(GUI_Menu *Aparent,int Asubmenuid, int Aid,
-			   int x, int y, char *Atext, GUI_Font *Afont,
+			   int x, int y, const char *Atext, GUI_Font *Afont,
 			   GUI_MenuActiveProc activeproc, int is_checkmenu)
   : GUI_Submenu(Aparent,Asubmenuid,x,y,Atext,Afont,is_checkmenu)
 {
@@ -178,7 +178,7 @@ GUI_Menu::~GUI_Menu()
 // future: free dynamic items array
 }
 
-void GUI_Menu::AddSubmenu(int Asubmenuid, char *Atext)
+void GUI_Menu::AddSubmenu(int Asubmenuid, const char *Atext)
 {
   int newpos=0;
 
@@ -192,7 +192,7 @@ void GUI_Menu::AddSubmenu(int Asubmenuid, char *Atext)
   }
 }
 
-void GUI_Menu::AddMenuitem(int Asubmenuid, int Aid, char *Atext,
+void GUI_Menu::AddMenuitem(int Asubmenuid, int Aid, const char *Atext,
 	       GUI_MenuActiveProc Aactiveproc, int is_checkmenu)
 {
   GUI_Submenu *temp=NULL;

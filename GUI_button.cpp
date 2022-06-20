@@ -68,7 +68,7 @@ GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
 	checked=0;
 }
 
-GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, char *text,
+GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 		       GUI_Font *font, int alignment, int is_checkbutton,
 		       GUI_ActiveProc activeproc, int flat)
  : GUI_Widget(data,x,y,w,h)
@@ -98,7 +98,7 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, char *text,
   if (is_checkable &&(checkmarks==NULL))
   {
     checkmarks=GUI_LoadImage(checker_w,checker_h,checker_pal,checker_data);
-    SDL_SetColorKey(checkmarks,SDL_SRCCOLORKEY,0);
+    SDL_SetColorKey(checkmarks,SDL_TRUE,0);
   }
   ChangeTextButton(-1,-1,-1,-1,text,alignment);
 
@@ -122,7 +122,7 @@ GUI_Button::~GUI_Button()
 }
 
 /* Resize/reposition/change text */
-void GUI_Button::ChangeTextButton(int x, int y, int w, int h, char* text, int alignment)
+void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char* text, int alignment)
 {
   if (x>=0)
     area.x=x;
@@ -277,11 +277,12 @@ void GUI_Button::Enable(int flag)
 	Redraw();
 }
 
-SDL_Surface* GUI_Button::CreateTextButtonImage(int style, char *text, int alignment)
+SDL_Surface* GUI_Button::CreateTextButtonImage(int style, const char *_text, int alignment)
 {
   SDL_Rect fillrect;
   int th,tw,tx,ty;
-  SDL_Surface *img=SDL_AllocSurface(SDL_SWSURFACE,area.w,area.h,
+  char *text;
+  SDL_Surface *img=SDL_CreateRGBSurface(SDL_SWSURFACE,area.w,area.h,
 				    16,31 << 11,63 << 5,31,0);
   Uint32 color1=SDL_MapRGB(img->format,BL_R,BL_G,BL_B);
   Uint32 color2=SDL_MapRGB(img->format,BS_R,BS_G,BS_B);
@@ -290,6 +291,7 @@ SDL_Surface* GUI_Button::CreateTextButtonImage(int style, char *text, int alignm
 
   if (img==NULL) return NULL;
 
+  text=SDL_strdup(_text);
   buttonFont->SetColoring(0,0,0);
   buttonFont->SetTransparency(1);
   buttonFont->TextExtent(text,&tw,&th);
@@ -360,5 +362,6 @@ SDL_Surface* GUI_Button::CreateTextButtonImage(int style, char *text, int alignm
     buttonFont->TextOut(img,tx,ty,text);
     break;
   }
+  SDL_free(text);
   return img;
 }

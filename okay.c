@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-	SDL_Surface *screen;
+	SDL_Window *window;
 
 	if ( argv[1] == NULL ) {
 		fprintf(stderr, "Usage: %s <message>\n", argv[0]);
@@ -22,14 +22,9 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	/* Get a video mode for display */
-	screen = SDL_SetVideoMode(320, 200, 0, SDL_SWSURFACE);
-	if ( screen == NULL ) {
-		fprintf(stderr, "Couldn't set video mode: %s\n",SDL_GetError());
-		exit(1);
-	}
-	SDL_WM_SetCaption("Hi there!", "hiya");
+	window = SDL_CreateWindow("Hi there!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 200, 0);
 
 	/* Pop up the message and quit */
-	GUI_MessageBox(screen, "Message", argv[1], GUI_MBOK);
+	GUI_MessageBox(window, "Message", argv[1], GUI_MBOK);
 	exit(0);
 }

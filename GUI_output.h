@@ -28,7 +28,7 @@ typedef struct GUI_Output GUI_Output;
    use a default internal 8x8-pixel font.
    When shown, the output window will display to the 'screen' surface.
  */
-extern GUI_Output *GUI_CreateOutput(SDL_Surface *screen,
+extern GUI_Output *GUI_CreateOutput(SDL_Window *window,
 				int width, int height, SDL_Surface *font);
 
 /* Add output to an output window.  If the window is visible, the output
@@ -68,7 +68,7 @@ extern void GUI_DeleteOutput(GUI_Output *output);
 #define GUI_MBOKCANCEL	0x0002	/* A "Cancel" button on the left - return 0
 				   An "OK" button on the right - return 1 */
 /* */
-extern int GUI_MessageBox(SDL_Surface *screen,
+extern int GUI_MessageBox(SDL_Window *window,
 			const char *title, const char *text, Uint32 style);
 
 #ifdef __cplusplus

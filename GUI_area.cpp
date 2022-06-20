@@ -36,9 +36,9 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b,
 
 /* Map the color to the display */
 void
-GUI_Area:: SetDisplay(SDL_Surface *display)
+GUI_Area:: SetDisplay(SDL_Window *window)
 {
-	GUI_Widget::SetDisplay(display);
+	GUI_Widget::SetDisplay(window);
 	color = SDL_MapRGB(screen->format, R, G, B);
 	if (useFrame)
 	  frameColor = SDL_MapRGB(screen->format, fR, fG, fB);

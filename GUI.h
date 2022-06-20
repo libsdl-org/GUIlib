@@ -15,7 +15,7 @@
 class GUI {
 
 public:
-	GUI(SDL_Surface *display);
+	GUI(SDL_Window *window);
 	~GUI();
 
 	/* Add a widget to the GUI.
@@ -48,6 +48,9 @@ public:
 	void Run(GUI_IdleProc idle = NULL, int once = 0, int multitaskfriendly = 0);
 
 protected:
+	/* The display window */
+	SDL_Window *m_window;
+
 	/* The display surface */
 	SDL_Surface *screen;
 
