@@ -5317,11 +5317,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -5363,11 +5363,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -8601,11 +8601,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -8647,11 +8647,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -15977,7 +15977,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-SDL_VERSION=2.0.16
+SDL_VERSION=2.0.0
 
 
 
@@ -16440,6 +16440,82 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
 
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GCC -Wall option" >&5
+printf %s "checking for GCC -Wall option... " >&6; }
+save_CFLAGS="$CFLAGS"
+CFLAGS="$save_CFLAGS -Wall"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+int x = 0;
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  have_gcc_Wall=yes
+else $as_nop
+  have_gcc_Wall=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $have_gcc_Wall" >&5
+printf "%s\n" "$have_gcc_Wall" >&6; }
+CFLAGS="$save_CFLAGS"
+if test x$have_gcc_Wall = xyes; then
+    CFLAGS="$CFLAGS -Wall"
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for necessary GCC -Wno-multichar option" >&5
+printf %s "checking for necessary GCC -Wno-multichar option... " >&6; }
+    need_gcc_Wno_multichar=no
+    case "$host" in
+        *-*-haiku*)
+            need_gcc_Wno_multichar=yes
+            ;;
+    esac
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $need_gcc_Wno_multichar" >&5
+printf "%s\n" "$need_gcc_Wno_multichar" >&6; }
+    if test x$need_gcc_Wno_multichar = xyes; then
+        CFLAGS="$CFLAGS -Wno-multichar"
+    fi
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for linker option --no-undefined" >&5
+printf %s "checking for linker option --no-undefined... " >&6; }
+have_no_undefined=no
+case "${host_os}" in
+    openbsd*) ;;
+    darwin*) have_no_undefined="-Wl,-undefined,error"
+       LDFLAGS="$LDFLAGS -Wl,-undefined,error" ;;
+    *) save_LDFLAGS="$LDFLAGS"
+       LDFLAGS="$LDFLAGS -Wl,--no-undefined"
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  have_no_undefined=yes
+else $as_nop
+  LDFLAGS="$save_LDFLAGS"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+       ;;
+esac
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $have_no_undefined" >&5
+printf "%s\n" "$have_no_undefined" >&6; }
 
 CXXFLAGS="$CFLAGS"
 
