@@ -43,6 +43,11 @@ libGUI_la_SOURCES =		\
 	the_font.h		\
 	the_checker.h
 
+libGUI_la_LDFLAGS = 		\
+	-no-undefined		\
+	-release $(LT_RELEASE)	\
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
 EXTRA_DIST =			\
 	CHANGES			\
 	autogen.sh		\
@@ -51,11 +56,6 @@ EXTRA_DIST =			\
 	hello2.bmp		\
 	scroll_dn.bmp		\
 	scroll_up.bmp
-libGUI_la_LDFLAGS = 		\
-	-no-undefined		\
-	-release $(LT_RELEASE)	\
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
 
 noinst_PROGRAMS = genimage hello hello_C keyboard okay
 

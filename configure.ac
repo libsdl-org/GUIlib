@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(README)
+AC_INIT(GUI.cpp)
 
 dnl Set various version strings - taken gratefully from the GTk sources
 
@@ -44,11 +44,11 @@ AM_INIT_AUTOMAKE(GUIlib, $VERSION)
 
 dnl Check for tools
 
-AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
-AM_PROG_LIBTOOL
+AC_PROG_MAKE_SET
 AC_PROG_INSTALL
+LT_INIT([win32-dll])
 
 dnl Check for SDL
 SDL_VERSION=2.0.10
@@ -63,6 +63,5 @@ dnl C++ flags are the same as C flags
 CXXFLAGS="$CFLAGS"
 
 # Finally create all the generated files
-AC_OUTPUT([
-Makefile
-])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
