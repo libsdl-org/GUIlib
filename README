@@ -1,4 +1,18 @@
 
+*** THIS PROJECT IS ARCHIVED ***
+
+We did a quick update for SDL2 support, and then made the
+github repo read-only. This is here for historical
+purposes; it was used for an SDL_net sample app and
+maybe a few other things, but nothing serious and it
+hasn't been maintained in years.
+
+Do not use this in new code! And consider migrating away
+from it in old code, if you happen to be using it.
+
+*** ORIGINAL README FOLLOWS ***
+
+
 This is a very simple GUI framework, for use with SDL.
 It is very flexible, but is by no means a complete windowing system.
 Feel free to improve it!! :)
